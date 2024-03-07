@@ -56,18 +56,12 @@ namespace llcom.Pages
             LockIcon.DataContext = this;
             UnLockIcon.DataContext = this;
             UnLockText.DataContext = this;
-            RTSCheckBox.DataContext = this;
-            DTRCheckBox.DataContext = this;
-            Rts = false;
-            Dtr = true;
             HEXBox.DataContext = Tools.Global.setting;
             HexSendCheckBox.DataContext = Tools.Global.setting;
+            SubpackageShowCheckBox.DataContext = Tools.Global.setting;
+            ShowSendCheckBox.DataContext = Tools.Global.setting;
             this.ExtraEnterCheckBox.DataContext = Tools.Global.setting;
             DisableLogCheckBox.DataContext = Tools.Global.setting;
-            EnableSymbolCheckBox.DataContext = Tools.Global.setting;
-
-            packLengthWarn = TryFindResource("SettingMaxShowPackWarn") as string ?? "?!";
-            logAutoClearWarn = TryFindResource("SettingMaxPacksWarn") as string ?? "?!";
             packsTooMuch = TryFindResource("BuffPacksTooMuchWarn") as string ?? "?!";
             uiTooLag = TryFindResource("LogLagWarn") as string ?? "?!";
         }
@@ -144,6 +138,8 @@ namespace llcom.Pages
                     continue;
 
                 //缓存处理好的数据
+                packLengthWarn = TryFindResource("SettingMaxShowPackWarn") as string ?? "?!";
+                logAutoClearWarn = TryFindResource("SettingMaxPacksWarn") as string ?? "?!";
                 var rawList = new List<DataRaw>();
                 DateTime uartSentTime = DateTime.MinValue;
                 var uartSentList = new List<byte>();
@@ -257,6 +253,7 @@ namespace llcom.Pages
             public string title;
             public string data = null;
             public string hex = null;
+            public string warn = null;
             public SolidColorBrush color;
             public DataRaw(Tools.DataShowRaw d) 
             {
@@ -265,23 +262,25 @@ namespace llcom.Pages
                 if (d.data != null && d.data.Length > 0)
                 {
                     var len = d.data.Length;
-                    var warn = "";
                     if (d.data.Length > Tools.Global.setting.MaxPackShow)
                     {
                         warn = packLengthWarn;
-                        len = Tools.Global.setting.MaxPackShow;
+                        len = (Tools.Global.setting.MaxPackShow > 0)? Tools.Global.setting.MaxPackShow:0;
                     }
 
-                    //主要数据
-                    data = Tools.Global.setting.showHexFormat switch
+                    if(len > 0)
                     {
-                        2 => Tools.Global.Byte2Hex(d.data, " ",len) + warn,
-                        _ => Tools.Global.Byte2Readable(d.data, len) + warn,
-                    };
-                    color = d.color;
-                    //小字hex
-                    if (Tools.Global.setting.showHexFormat == 0)
-                        hex = "HEX:" + Tools.Global.Byte2Hex(d.data, " ", len) + warn;
+                        //主要数据
+                        data = Tools.Global.setting.showHexFormat switch
+                        {
+                            2 => Tools.Global.Byte2Hex(d.data, " ", len),
+                            _ => Tools.Global.Byte2Readable(d.data, len),
+                        };
+                        color = d.color;
+                        //小字hex
+                        if (Tools.Global.setting.showHexFormat == 0)
+                            hex = "HEX:" + Tools.Global.Byte2Hex(d.data, " ", len);
+                    }
                 }
             }
         }
@@ -300,21 +299,30 @@ namespace llcom.Pages
             if (e.data != null)//有数据时才显示信息
             {
                 //主要显示数据
-                p = new Paragraph(new Run(""));
                 text = new Span(new Run(e.data));
                 text.Foreground = e.color;
                 text.FontSize = 15;
                 p.Inlines.Add(text);
+                p.Margin = new Thickness(0, 0, 0, 8);
                 uartDataFlowDocument.Document.Blocks.Add(p);
+            }
 
-                //同时显示模式时，才显示小字hex
-                if (e.hex != null)
-                {
-                    p = new Paragraph(new Run(e.hex));
-                    p.Foreground = e.color;
-                    p.Margin = new Thickness(0, 0, 0, 8);
-                    uartDataFlowDocument.Document.Blocks.Add(p);
-                }
+            //同时显示模式时，才显示小字hex
+            if (e.hex != null)
+            {
+                p = new Paragraph(new Run(e.hex));
+                p.Foreground = e.color;
+                p.Margin = new Thickness(0, 0, 0, 8);
+                uartDataFlowDocument.Document.Blocks.Add(p);
+            }
+
+            //数据截断告警
+            if (e.warn != null)
+            {
+                p = new Paragraph(new Run(e.warn));
+                p.Foreground = Brushes.Black; ;
+                p.Margin = new Thickness(0, 0, 0, 8);
+                uartDataFlowDocument.Document.Blocks.Add(p);
             }
         }
 
@@ -322,8 +330,9 @@ namespace llcom.Pages
         {
             public string time;
             public string title;
-            public string data;
+            public string data = null;
             public string hex = null;
+            public string warn = null;
             public SolidColorBrush color;
             public SolidColorBrush hexColor;
 
@@ -357,24 +366,26 @@ namespace llcom.Pages
                 hexColor = sent ? Brushes.IndianRed : Brushes.ForestGreen;
 
                 var len = temp.Length;
-                var warn = "";
-                if (temp.Length > Tools.Global.setting.MaxPackShow)
+                if (len > Tools.Global.setting.MaxPackShow)
                 {
                     warn = packLengthWarn;
-                    len = Tools.Global.setting.MaxPackShow;
+                    len = (Tools.Global.setting.MaxPackShow > 0) ? Tools.Global.setting.MaxPackShow : 0;
                 }
-                //主要数据
-                if(temp != null && temp.Length > 0)
+                if (len > 0)
                 {
-                    this.data = Tools.Global.setting.showHexFormat switch
+                    //主要数据
+                    if (temp != null)
                     {
-                        2 => Tools.Global.Byte2Hex(temp, " ", len) + warn,
-                        _ => Tools.Global.Byte2Readable(temp, len) + warn,
-                    };
+                        this.data = Tools.Global.setting.showHexFormat switch
+                        {
+                            2 => Tools.Global.Byte2Hex(temp, " ", len),
+                            _ => Tools.Global.Byte2Readable(temp, len),
+                        };
+                    }
+                    //同时显示模式时，才显示小字hex
+                    if (Tools.Global.setting.showHexFormat == 0)
+                        hex = "HEX:" + Tools.Global.Byte2Hex(temp, " ", len);
                 }
-                //同时显示模式时，才显示小字hex
-                if (Tools.Global.setting.showHexFormat == 0)
-                    hex = "HEX:" + Tools.Global.Byte2Hex(temp, " ", len) + warn;
             }
         }
 
@@ -385,7 +396,7 @@ namespace llcom.Pages
         /// <param name="send">true为发送，false为接收</param>
         private void addUartLog(DataUart d)
         {
-            if (Tools.Global.setting.timeout >= 0)
+            if (Tools.Global.setting.subpackageShow == true)
             {
                 Paragraph p = new Paragraph(new Run(""));
 
@@ -399,21 +410,30 @@ namespace llcom.Pages
                 p.Inlines.Add(text);
 
                 //主要显示数据
-                text = new Span(new Run(d.data));
-                text.Foreground = d.color;
-                text.FontSize = 15;
-                p.Inlines.Add(text);
-
-                //同时显示模式时，才显示小字hex
-                if (d.hex != null)
+                if (d.data != null)
+                {
+                    text = new Span(new Run(d.data));
+                    text.Foreground = d.color;
+                    text.FontSize = 15;
+                    p.Inlines.Add(text);
                     p.Margin = new Thickness(0, 0, 0, 8);
-                uartDataFlowDocument.Document.Blocks.Add(p);
+                    uartDataFlowDocument.Document.Blocks.Add(p);
+                }
 
                 //同时显示模式时，才显示小字hex
                 if (d.hex != null)
                 {
                     p = new Paragraph(new Run(d.hex));
                     p.Foreground = d.hexColor;
+                    p.Margin = new Thickness(0, 0, 0, 8);
+                    uartDataFlowDocument.Document.Blocks.Add(p);
+                }
+
+                //数据截断告警
+                if (d.warn != null)
+                {
+                    p = new Paragraph(new Run(d.warn));
+                    p.Foreground = Brushes.Black;
                     p.Margin = new Thickness(0, 0, 0, 8);
                     uartDataFlowDocument.Document.Blocks.Add(p);
                 }
@@ -444,29 +464,6 @@ namespace llcom.Pages
         private void LockLogButton_Click(object sender, RoutedEventArgs e)
         {
             LockLog = !LockLog;
-        }
-
-
-        public bool Rts {
-            get
-            {
-                return Tools.Global.uart.Rts;
-            }
-            set
-            {
-                Tools.Global.uart.Rts = value;
-            }
-        }
-        public bool Dtr
-        {
-            get
-            {
-                return Tools.Global.uart.Dtr;
-            }
-            set
-            {
-                Tools.Global.uart.Dtr = value;
-            }
         }
 
         private void uartDataFlowDocument_MouseLeave(object sender, MouseEventArgs e)

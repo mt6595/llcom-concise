@@ -99,10 +99,6 @@ namespace llcom.Tools
         /// 获取实际的ProfilePath路径（目前没啥用了）
         /// </summary>
         /// <returns></returns>
-        public static string GetTrueProfilePath()
-        {
-            return ProfilePath;
-        }
 
         /// <summary>
         /// 是否为应用商店版本？
@@ -172,23 +168,14 @@ namespace llcom.Tools
                 }
                 catch
                 {
-                    Tools.MessageBox.Show($"配置文件加载失败！\r\n" +
-                        $"如果是配置文件损坏，可前往{ProfilePath}settings.json.bakup查找备份文件\r\n" +
-                        $"并使用该文件替换{ProfilePath}settings.json文件恢复配置");
+                    Tools.MessageBox.Show($"Configuration file loading failed!\r\n" +
+                        $"If the configuration file is corrupted, you can go to {ProfilePath}settings.json.bakupto find the backup file.\r\n" +
+                        $"And use this file to replace{ProfilePath}settings.jsonto restore the configuration.");
                     Environment.Exit(1);
                 }
             }
             else
             {
-                if (Directory.GetFiles(ProfilePath).Length > 10)
-                {
-                    var r = Tools.InputDialog.OpenDialog("检测到当前文件夹有其他文件\r\n" +
-                        "建议新建一个文件夹给llcom，并将llcom.exe放入其中\r\n" +
-                        "不然当前文件夹会显得很乱哦~\r\n" +
-                        "是否想要继续运行呢？", null, "温馨提示");
-                    if (!r.Item1)
-                        Environment.Exit(1);
-                }
                 setting = new Model.Settings();
             }
         }
@@ -215,23 +202,22 @@ namespace llcom.Tools
             }
             catch
             {
-                Tools.MessageBox.Show($"本软件仅支持.net framework 4.6.2以上版本，该计算机上的最高版本为{currentVersion}\r\n" +
-                    $"你可以选择继续使用，但若运行途中遇到bug，将不会上报给开发者。\r\n" +
-                    $"建议升级到最新.net framework版本");
+                Tools.MessageBox.Show($"This software only supports .NET Framework version 4.6.2 and above, while the highest version installed on this computer is {currentVersion}\r\n" +
+                    $"You can choose to continue to use, but if you encounter any bugs during operation, they will not be reported to the developer.\r\n" +
+                    $"Recommend upgrading to the latest version of .NET Framework.");
                 ReportBug = false;
             }
             //文件名不能改！
             if (FileName.ToUpper() != "LLCOM.EXE")
             {
-                Tools.MessageBox.Show("啊呀呀，软件文件名被改了。。。\r\n" +
-                    "为了保证软件功能的正常运行，请将exe名改回llcom.exe");
+                Tools.MessageBox.Show("For the normal operation of the software, please rename the executable file to llcom.exe.");
                 Environment.Exit(1);
             }
             //C:\Users\chenx\AppData\Local\Temp\7zO05433053\user_script_run
             if (AppPath.ToUpper().Contains(@"\APPDATA\LOCAL\TEMP\") ||
                 AppPath.ToUpper().Contains(@"\WINDOWS\TEMP\"))
             {
-                Tools.MessageBox.Show("请勿在压缩包内直接打开本软件。");
+                Tools.MessageBox.Show("Do not run within the compressed file.");
                 Environment.Exit(1);
             }
 
@@ -252,10 +238,11 @@ namespace llcom.Tools
             //如果该数组长度大于1，说明多次运行
             if (processes.Length > 1 && File.Exists(ProfilePath + "lock"))
             {
-                Tools.MessageBox.Show("不支持同文件夹多开！\r\n如需多开，请在多个文件夹分别存放llcom.exe后，分别运行。");
+                Tools.MessageBox.Show("Not support running multiple instances in the same folder!\r\nPlease run the .exe in multiple folders.");
                 Environment.Exit(1);
             }
             File.Create(ProfilePath + "lock").Close();
+
             try
             {
                 if (!Directory.Exists(ProfilePath + "core_script"))
@@ -320,7 +307,7 @@ namespace llcom.Tools
             }
             catch (Exception e)
             {
-                Tools.MessageBox.Show("生成文件结构失败，请确保本软件处于有读写权限的目录下再打开。\r\n错误信息：" + e.Message);
+                Tools.MessageBox.Show("Failed to generate file structure. Please ensure that the software is opened in a directory with read and write permissions.\r\nError message:" + e.Message);
                 Environment.Exit(1);
             }
 
@@ -433,49 +420,9 @@ namespace llcom.Tools
         {
             if (len == -1)
                 len = vBytes.Length;
-            if (vBytes == null)//fix
+            if (vBytes == null)
                 return "";
-            //没开这个功能/非utf8就别搞了
-            if (!setting.EnableSymbol || setting.encoding != 65001)
-                return Byte2String(vBytes, len);
-            var tb = new List<byte>();
-            for (int i = 0; i < len; i++)
-            {
-                switch(vBytes[i])
-                {
-                    case 0x0d:
-                        //遇到成对出现
-                        if(i < len - 1 && vBytes[i+1] == 0x0a)
-                        {
-                            tb.AddRange(symbols[0x0d]);
-                            tb.AddRange(symbols[0x0a]);
-                            tb.Add(0x0d);
-                            tb.Add(0x0a);
-                            i++;
-                        }
-                        else
-                        {
-                            tb.AddRange(symbols[0x0d]);
-                            tb.Add(vBytes[i]);
-                        }
-                        break;
-                    case 0x0a:
-                    case 0x09://tab字符
-                        tb.AddRange(symbols[vBytes[i]]);
-                        tb.Add(vBytes[i]);
-                        break;
-                    default:
-                        //普通的字符
-                        if(vBytes[i] <= 0x1f)
-                            tb.AddRange(symbols[vBytes[i]]);
-                        else if (vBytes[i] == 0x7f)//del
-                            tb.AddRange(b_del);
-                        else
-                            tb.Add(vBytes[i]);
-                        break;
-                }
-            }
-            return GetEncoding().GetString(tb.ToArray());
+            return Byte2String(vBytes, len);
         }
 
         /// <summary>
@@ -501,52 +448,7 @@ namespace llcom.Tools
         {
             if (len == -1)
                 len = d.Length;
-            return BitConverter.ToString(d,0,len).Replace("-", s);
-        }
-
-
-        /// <summary>
-        /// 导入SSCOM配置文件数据
-        /// </summary>
-        /// <param name="path"></param>
-        /// <returns></returns>
-        public static List<Model.ToSendData> ImportFromSSCOM(string path)
-        {
-            var lines = File.ReadAllLines(path, Encoding.GetEncoding("GB2312"));
-            var r = new List<Model.ToSendData>();
-            Regex title = new Regex(@"N1\d\d=\d*,");
-            for (int i = 0; i < lines.Length; i++)
-            {
-                try
-                {
-                    var temp = new Model.ToSendData();
-                    //Console.WriteLine(lines[i]);
-                    if (title.IsMatch(lines[i]))//匹配上了
-                    {
-                        var strs = lines[i].Split(",".ToCharArray()[0]);
-                        temp.commit = strs[1].Replace(((char)2).ToString(), ",");
-                        if (string.IsNullOrWhiteSpace(temp.commit))
-                            temp.commit = "发送";
-                        //Console.WriteLine(temp.commit);
-
-                        int dot = lines[i + 1].IndexOf(",");
-                        temp.hex = lines[i + 1].Substring(dot - 1, 1) == "H";
-                        //Console.WriteLine(strs[0].Substring(strs[0].Length - 1));
-
-                        string text = lines[i + 1].Substring(dot + 1);
-                        if (!string.IsNullOrWhiteSpace(text))
-                        {
-                            temp.text = text.Replace(((char)2).ToString(), ",");
-                            r.Add(temp);
-                        }
-                    }
-                }
-                catch
-                {
-                    //先不处理
-                }
-            }
-            return r;
+            return BitConverter.ToString(d,0,len).Replace("-", s)+" ";
         }
 
         /// <summary>
@@ -597,78 +499,5 @@ namespace llcom.Tools
             }
 
         }
-
-        private static string GitHubToken = null;
-        /// <summary>
-        /// 获取
-        /// </summary>
-        /// <param name="callback"></param>
-        /// <returns></returns>
-        public static List<OnlineScript> GetOnlineScripts(Action<int,int> callback = null)
-        {
-            if(GitHubToken == null)
-            {
-                try
-                {
-                    var client = new RestClient("https://llcom.papapoi.com/token.txt");
-                    var request = new RestRequest();
-                    request.Timeout = 10000;
-                    var response = client.Get(request);
-                    GitHubToken = response.Content;
-                }
-                catch
-                {
-                    return null;
-                }
-            }
-            //请求函数
-            var req = (string after) =>
-            {
-                var client = new RestClient();
-                client.BaseUrl = new Uri("https://api.github.com/graphql");
-                var request = new RestRequest(RestSharp.Method.POST);
-                request.AddHeader("user-agent", "llcom");
-                request.AddHeader("Authorization", $"bearer {GitHubToken}");
-                request.AddParameter("application/json", 
-                    "{\r\n  \"query\": \"query {repository(owner: \\\"chenxuuu\\\", name: \\\"llcom\\\") {discussions(categoryId:\\\"DIC_kwDOCtNzks4CSz35\\\"," +
-                    (after == null ? "" : $"after: \"{after}\"") + "first: 100" +
-                    ") {totalCount,pageInfo {startCursor,endCursor,hasNextPage,hasPreviousPage},nodes {body,url}}}}\"\r\n}", ParameterType.RequestBody);
-                var response = client.Execute(request);
-                var j = JsonConvert.DeserializeObject<JObject>(response.Content);
-                var bodys = from i in j["data"]["repository"]["discussions"]["nodes"]
-                            select ((string)i["body"],(string)i["url"]);
-                return (
-                    bodys.ToList(),
-                    (int)j["data"]["repository"]["discussions"]["totalCount"],
-                    (string)j["data"]["repository"]["discussions"]["pageInfo"]["endCursor"],
-                    (bool)j["data"]["repository"]["discussions"]["pageInfo"]["hasNextPage"]
-                );
-            };
-
-            string lastPage = null;
-            var scripts = new List<OnlineScript>();
-            var pages = 0;
-            while(true)
-            {
-                var (data, total, endCursor, hasNextPage) = req(lastPage);
-                foreach (var (s,u) in data)
-                {
-                    try
-                    {
-                        var n = new OnlineScript(s);
-                        n.Url = u;
-                        scripts.Add(n);
-                    }
-                    catch { }
-                }
-                callback?.Invoke(pages, total/100);//回调，上报进度
-                if (!hasNextPage)
-                    break;
-                pages++;
-                lastPage = endCursor;
-            }
-            return scripts;
-        }
-
     }
 }

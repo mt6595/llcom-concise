@@ -21,31 +21,6 @@ namespace llcom.Model
         public event EventHandler UartDataRecived;
         public event EventHandler UartDataSent;
         private Stream lastPortBaseStream = null;
-        private bool _rts = false;
-        private bool _dtr = true;
-
-        public bool Rts
-        {
-            get
-            {
-                return _rts;
-            }
-            set
-            {
-                Tools.Global.uart.serial.RtsEnable = _rts = value;
-            }
-        }
-        public bool Dtr
-        {
-            get
-            {
-                return _dtr;
-            }
-            set
-            {
-                Tools.Global.uart.serial.DtrEnable = _dtr = value;
-            }
-        }
 
         private static readonly object objLock = new object();
         
@@ -56,8 +31,8 @@ namespace llcom.Model
         {
             //声明接收到事件
             serial.DataReceived += Serial_DataReceived;
-            serial.RtsEnable = Rts;
-            serial.DtrEnable = Dtr;
+            serial.RtsEnable = false;
+            serial.DtrEnable = false;
             new Thread(ReadData).Start();
 
             //适配一下通用通道
@@ -132,8 +107,8 @@ namespace llcom.Model
             serial.Parity = (Parity)Tools.Global.setting.parity;
             serial.DataBits = Tools.Global.setting.dataBits;
             serial.StopBits = (StopBits)Tools.Global.setting.stopBit;
-            serial.RtsEnable = Rts;
-            serial.DtrEnable = Dtr;
+            serial.RtsEnable = false;
+            serial.DtrEnable = false;
             Tools.Logger.AddUartLogDebug($"[refreshSerialDevice]done");
         }
 
@@ -245,7 +220,7 @@ namespace llcom.Model
 
                     if (result.Count > Tools.Global.setting.maxLength)//长度超了
                         break;
-                    if (Tools.Global.setting.bitDelay && Tools.Global.setting.timeout > 0)//如果是设置了等待间隔时间
+                    if (Tools.Global.setting.timeout > 0)//如果是设置了等待间隔时间
                     {
                         System.Threading.Thread.Sleep(Tools.Global.setting.timeout);//等待时间
                     }

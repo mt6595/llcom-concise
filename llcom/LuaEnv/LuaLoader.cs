@@ -11,7 +11,7 @@ namespace llcom.LuaEnv
     class LuaLoader
     {
 
-        /// <summary>
+        /// <summary> 
         /// 初始化lua对象
         /// </summary>
         /// <param name="lua"></param>

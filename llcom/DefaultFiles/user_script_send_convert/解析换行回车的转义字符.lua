@@ -1,2 +1,2 @@
+--Parsing carriage return and line break escape characters
 return uartData:gsub("\\r","\r"):gsub("\\n","\n")
---这个是加上换行回车

@@ -27,52 +27,20 @@
             <TextBlock FontSize="15" Margin="10,20,0,0" TextWrapping="Wrap"
                        Text="{DynamicResource AboutDiscriptionMain}"/>
 
+            <TextBlock FontSize="15" Margin="10,20,0,0" TextWrapping="Wrap"
+                       Text=""/>
+            
             <TextBlock FontSize="15" Margin="10,0,10,0" TextWrapping="Wrap"
                        Text="{DynamicResource AboutDiscriptionMore}"/>
 
-
-
-            <CheckBox Content="{DynamicResource AboutAutoUpdate}" IsChecked="{Binding autoUpdate}" Margin="0,20,0,0" HorizontalAlignment="Center"/>
-            <Button Name="CheckUpdateButton" Content="{DynamicResource AboutLoadingUpdate}" Width="auto" HorizontalAlignment="Center" IsEnabled="False" Click="CheckUpdateButton_Click"/>
-
-            <TextBlock Text="{DynamicResource AboutDevelopers}" 
-                                   FontSize="15"
-                                   Margin="10,20,0,0"/>
-            <TextBlock Text="{DynamicResource AboutQQGroup}" 
-                                   FontSize="15"
-                                   Margin="10,0,0,0"/>
-            <TextBlock Text="{DynamicResource AboutTranslator}" 
+            <TextBlock Text="Author:  chenxuuu, whc2001, Atomiz" 
                                    FontSize="15"
                                    Margin="10,20,0,0"/>
 
-            <TextBlock Text="{DynamicResource AboutGitHubText}" FontSize="15" Margin="10,20,0,0" HorizontalAlignment="Center"/>
+            <TextBlock Text="{DynamicResource AboutGitHubText}" FontSize="15" Margin="10,0,0,0" HorizontalAlignment="Center"/>
             <Button Name="OpenSourceButton" Content="{DynamicResource AboutGitHubButton}" Width="auto" HorizontalAlignment="Center" Click="OpenSourceButton_Click"/>
 
-            <TextBlock Text="{DynamicResource AboutFeedBack}" 
-                                   FontSize="15"
-                                   Margin="10,20,0,0" 
-                                   HorizontalAlignment="Center"/>
-            <Button Name="newissueButton" Content="{DynamicResource AboutFeedBackButton}" Width="auto" HorizontalAlignment="Center" Click="NewissueButton_Click"/>
-
-
-            <TextBlock FontSize="15" Margin="10,20,0,0" Text="{DynamicResource AboutThanksProjects}"/>
-            <TextBlock
-                                   FontSize="15"
-                                   Margin="10,0,10,0"
-                                   TextWrapping="Wrap">
-                            xLua
-                            <LineBreak/>
-                            AdonisUI
-                            <LineBreak/>
-                            AvalonEdit
-                            <LineBreak/>
-                            LibUsbDotNet
-                            <LineBreak/>
-                            Costura.Fody
-                            <LineBreak/>
-                            <LineBreak/>
-            </TextBlock>
-            <TextBlock Text="{DynamicResource AboutVersion}"/>
+            <TextBlock Text="Software version"/>
             <TextBlock Name="versionTextBlock"/>
         </StackPanel>
     </ScrollViewer>

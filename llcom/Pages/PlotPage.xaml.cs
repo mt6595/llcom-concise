@@ -1,19 +1,24 @@
-﻿using ScottPlot;
+﻿using Newtonsoft.Json.Linq;
+using ScottPlot;
+using ScottPlot.Plottable;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement.Window;
 
 namespace llcom.Pages
 {
@@ -22,52 +27,29 @@ namespace llcom.Pages
     /// </summary>
     public partial class PlotPage : Page
     {
+        private const int MaxTable = 10;
+        private const int MaxPoints = 1000;
+        private double[][] DataY = new double[MaxTable][];
+        private bool NeedRefresh = true;
+
         public PlotPage()
         {
             InitializeComponent();
-        }
-
-        //最多十个图像
-        private double[][] Data = new double[10][];
-        private double[] DataX = null;
-        //最大点数量
-        private static int MaxPoints = 1000;
-
-        private ScottPlot.Plottable.Crosshair ch = null;
-
-        private ScottPlot.Styles.IStyle[] Styles = ScottPlot.Style.GetStyles();
-        private int StyleNow = -1;
-
-        private bool NeedRefresh = true;
-
-        bool first = true;
-        private void Page_Loaded(object sender, RoutedEventArgs e)
-        {
-            if (!first)
-                return;
-            first = false;
-            //暂时先定1000个点吧
-            DataX = new double[MaxPoints];
-            for (int i = 0; i < MaxPoints; i++)
-                DataX[i] = i - MaxPoints + 1;
-            for (int i = 0; i < Data.Length; i++)
+            for (int i = 0; i < DataY.Length; i++)
             {
-                if(Data[i] == null)
-                    Data[i] = new double[MaxPoints];
-                Plot.Plot.AddSignalXY(DataX, Data[i]);
+                if (DataY[i] == null)
+                    DataY[i] = new double[MaxPoints];
+                Plot.Plot.AddSignal(DataY[i]);
             }
-            Plot.Plot.SetAxisLimitsX(-MaxPoints, 0);
-            ch = Plot.Plot.AddCrosshair(0,0);
-
-            ch.Color = System.Drawing.Color.LightGray;
-            ch.LineWidth = 2;
+            Plot.Plot.AxisAuto();
+            Plot.Plot.Layout(0, 0, 0, 0, -5);
 
             //定时刷吧，要不然卡
             new Thread(() =>
             {
                 while (true)
                 {
-                    if(NeedRefresh)
+                    if (NeedRefresh)
                     {
                         NeedRefresh = false;
                         this.Dispatcher.Invoke(new Action(delegate
@@ -79,62 +61,43 @@ namespace llcom.Pages
                             catch { }
                         }));
                     }
-                    Thread.Sleep(100);
+                    Thread.Sleep(10);
                     if (Tools.Global.isMainWindowsClosed)
                         return;
                 }
             }).Start();
-
             LuaEnv.LuaApis.LinePlotAdd += (s, e) => AddPoint(e.N, e.Line);
+        }
+
+        private void Page_Loaded(object sender, RoutedEventArgs e)
+        {
         }
 
         private void ClearButton_Click(object sender, RoutedEventArgs e)
         {
-            for (int i = 0; i < Data.Length; i++)
-                for(int j = 0; j < Data[i].Length; j++)
-                    Data[i][j] = 0;
+            for (int iTemp = 0; iTemp < DataY.Length; iTemp++)
+                for (int jTemp = 0; jTemp < DataY[iTemp].Length; jTemp++)
+                    DataY[iTemp][jTemp] = 0;
+            //Plot.Plot.Clear();
             Refresh();
         }
-
-        private void ThemeButton_Click(object sender, RoutedEventArgs e)
-        {
-            StyleNow++;
-            if(StyleNow >= Styles.Length)
-                StyleNow = 0;
-            Plot.Plot.Style(Styles[StyleNow]);
-            Refresh();
-        }
-
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
         {
-            Plot.Plot.SetAxisLimitsX(-MaxPoints, 0);
-            //防止最大值最小值错误
-            var min = Data.Min(x => x.Min());
-            var max = Data.Max(x => x.Max());
-            if(min < max)
-                Plot.Plot.SetAxisLimitsY(min, max);
+            Plot.Plot.AxisAuto();
             Refresh();
         }
-
         private void Plot_MouseMove(object sender, MouseEventArgs e)
         {
-            var p = Plot.GetMouseCoordinates();
-            ch.X = p.x;
-            ch.Y = p.y;
             Refresh();
         }
-
         private void Refresh() => NeedRefresh = true;
-
         private void AddPoint(double d, int line)
         {
+            //RemoveAt
             if (line >= 10)
                 return;
-            if(Data[line] == null)
-                Data[line] = new double[MaxPoints];
-            for(int i = 0;i < MaxPoints - 1;i++)
-                Data[line][i] = Data[line][i + 1];
-            Data[line][MaxPoints - 1] = d;
+            Array.Copy(DataY[line], 1, DataY[line], 0, DataY[line].Length - 1);
+            DataY[line][MaxPoints - 1] = d;
             Refresh();
         }
     }

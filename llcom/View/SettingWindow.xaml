@@ -2,19 +2,13 @@
     x:Class="llcom.SettingWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:adonisExtensions="clr-namespace:AdonisUI.Extensions;assembly=AdonisUI"
-    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:fa="http://schemas.fontawesome.io/icons/"
-    xmlns:local="clr-namespace:llcom"
-    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     Title="{DynamicResource SettingTitle}"
-    Width="450"
+    Width="420"
     Height="490"
-    adonisExtensions:RippleExtension.FadeInDuration="0"
-    adonisExtensions:RippleExtension.FadeOutDuration="0"
     Loaded="Window_Loaded"
-    WindowStartupLocation="CenterScreen"
-    mc:Ignorable="d">
+    Closing="SettingWindow_Closing"
+    WindowStartupLocation="CenterScreen">
     <Window.Style>
         <Style BasedOn="{StaticResource {x:Type Window}}" TargetType="Window" />
     </Window.Style>
@@ -22,75 +16,52 @@
         <TabControl>
             <TabItem Header="{DynamicResource SettingBasic}">
                 <ScrollViewer>
-                    <StackPanel Margin="10,0,0,0">
-                        <CheckBox
-                            Margin="5"
-                            Content="{DynamicResource SettingAutoReconnect}"
-                            IsChecked="{Binding autoReconnect}" />
+                    <StackPanel Margin="5,0,0,0">
                         <Button
                             Name="OpenLogButton"
                             Margin="5"
                             Click="OpenLogButton_Click"
                             Content="{DynamicResource SettingOpenLogFolder}" />
-                        <WrapPanel Margin="5">
-                            <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingShowFormat}" />
-                            <ComboBox
-                                Name="showHexComboBox"
-                                Width="170"
-                                SelectedIndex="{Binding showHexFormat}">
-                                <ComboBoxItem Content="{DynamicResource SettingShowBoth}" />
-                                <ComboBoxItem Content="{DynamicResource SettingShoText}" />
-                                <ComboBoxItem Content="{DynamicResource SettingShowHexOnly}" />
-                            </ComboBox>
-                        </WrapPanel>
                         <CheckBox
                             Margin="5"
-                            Content="{DynamicResource SettingShowSend}"
-                            IsChecked="{Binding showSend}" />
+                            Content="{DynamicResource SettingAutoReconnect}"
+                            IsChecked="{Binding autoReconnect}" />
                         <CheckBox
                             Margin="5"
                             Content="{DynamicResource SettingKeepTop}"
                             IsChecked="{Binding topmost}" />
+                        <CheckBox
+                            Margin="5"
+                            Content="{DynamicResource SettingLagAutoClear}"
+                            IsChecked="{Binding LagAutoClear}" />
                         <StackPanel Margin="5" Orientation="Horizontal">
                             <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingUartTimeout}" />
-                            <TextBox MinWidth="50" Text="{Binding timeout, UpdateSourceTrigger=PropertyChanged}" />
+                            <TextBox MinWidth="60" Text="{Binding timeout, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock
                                 Margin="3,0"
                                 VerticalAlignment="Center"
-                                Text="{DynamicResource SettingMs}" />
+                                Text="ms" />
                         </StackPanel>
-                        <CheckBox
-                            Margin="5"
-                            Content="{DynamicResource SettingSplitByEmpty}"
-                            IsChecked="{Binding bitDelay}" />
-                        <CheckBox
-                            Margin="5"
-                            Content="{DynamicResource SettingTerminal}"
-                            IsChecked="{Binding terminal}" />
-                        <StackPanel Margin="0,10,0,5" Orientation="Horizontal">
+                        <StackPanel Margin="5" Orientation="Horizontal">
                             <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingMaxPack}" />
                             <TextBox MinWidth="60" Text="{Binding maxLength, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingByte}" />
+                            <TextBlock VerticalAlignment="Center" Text=" byte" />
                         </StackPanel>
-                        <StackPanel Margin="0,5" Orientation="Horizontal">
+                        <StackPanel Margin="5" Orientation="Horizontal">
                             <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingMaxShowPack}" />
                             <TextBox MinWidth="60" Text="{Binding MaxPackShow, UpdateSourceTrigger=PropertyChanged}" />
-                            <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingByte}" />
+                            <TextBlock VerticalAlignment="Center" Text=" byte" />
                         </StackPanel>
-                        <StackPanel Margin="0,0,0,5" Orientation="Horizontal">
+                        <StackPanel Margin="5" Orientation="Horizontal">
                             <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingPacksText}" />
                             <TextBox MinWidth="60" Text="{Binding MaxPacksAutoClear, UpdateSourceTrigger=PropertyChanged}" />
                             <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingPacks}" />
                         </StackPanel>
-                        <CheckBox
-                            Margin="0,0,0,10"
-                            Content="{DynamicResource SettingLagAutoClear}"
-                            IsChecked="{Binding LagAutoClear}" />
                         <WrapPanel Margin="5">
                             <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingDataBits}" />
                             <ComboBox
                                 Name="dataBitsComboBox"
-                                Width="50"
+                                Width="70"
                                 SelectionChanged="DataBitsComboBox_SelectionChanged">
                                 <ComboBoxItem Content="5" Tag="5" />
                                 <ComboBoxItem Content="6" Tag="6" />
@@ -102,7 +73,7 @@
                             <TextBlock VerticalAlignment="Center" Text="{DynamicResource SettingStopBit}" />
                             <ComboBox
                                 Name="stopBitComboBox"
-                                Width="50"
+                                Width="70"
                                 SelectionChanged="StopBitComboBox_SelectionChanged">
                                 <ComboBoxItem Content="1" />
                                 <ComboBoxItem Content="2" />
@@ -142,12 +113,12 @@
                     </Grid.RowDefinitions>
                     <WrapPanel Margin="0,0,0,5" Orientation="Horizontal">
                         <ComboBox
-                            Name="luaFileList"
-                            Width="250"
+                            Name="luaFileListSend"
+                            Width="200"
                             SelectionChanged="LuaFileList_SelectionChanged" />
                         <Button
                             Name="newScriptButton"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             Click="NewScriptButton_Click"
                             ToolTip="{DynamicResource LuaNewScript}">
                             <Grid>
@@ -157,14 +128,14 @@
                         </Button>
                         <Button
                             Name="testScriptButton"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             Click="TestScriptButton_Click"
                             ToolTip="{DynamicResource SettingLuaTestScript}">
                             <fa:FontAwesome Foreground="DarkGreen" Icon="Play" />
                         </Button>
                         <Button
                             Name="openScriptFolderButton"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             Click="OpenScriptFolderButton_Click"
                             ToolTip="{DynamicResource LuaOpenFolder}">
                             <Grid>
@@ -173,11 +144,25 @@
                             </Grid>
                         </Button>
                         <Button
+                                Name="RefreshScriptListButtonSend"
+                                Margin="2,0,0,0"
+                                Click="RefreshScriptListButtonSend_Click"
+                                ToolTip="{DynamicResource LuaRefreshList}">
+                            <fa:FontAwesome Foreground="Green" Icon="Refresh" />
+                        </Button>
+                        <Button
                             Name="apiDocumentButton"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             Click="ApiDocumentButton_Click"
                             ToolTip="{DynamicResource LuaApiReference}">
                             <fa:FontAwesome Foreground="DarkSlateGray" Icon="Book" />
+                        </Button>
+                        <Button
+                                Name="DeleteScriptButtonSend"
+                                Margin="2,0,0,0"
+                                Click="DeleteScriptButtonSend_Click"
+                                ToolTip="{DynamicResource DeleteScript}">
+                            <fa:FontAwesome Foreground="DarkCyan" Icon="trash" />
                         </Button>
                     </WrapPanel>
                     <WrapPanel
@@ -249,11 +234,6 @@
                         FontSize="10pt"
                         LostFocus="TextEditor_LostFocus"
                         ShowLineNumbers="True" />
-                    <WrapPanel Grid.Row="3" Margin="5">
-                        <TextBlock Text="{DynamicResource SettingLuaText1}" TextWrapping="Wrap" />
-                        <TextBlock Text="{DynamicResource SettingLuaText2}" TextWrapping="Wrap" />
-                        <TextBlock Text="{DynamicResource SettingLuaText3}" TextWrapping="Wrap" />
-                    </WrapPanel>
                 </Grid>
             </TabItem>
 
@@ -268,11 +248,11 @@
                     <WrapPanel Margin="0,0,0,5" Orientation="Horizontal">
                         <ComboBox
                             Name="luaFileListRev"
-                            Width="250"
+                            Width="200"
                             SelectionChanged="luaFileListRev_SelectionChanged" />
                         <Button
                             Name="newScriptButtonRev"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             Click="newScriptButtonRev_Click"
                             ToolTip="{DynamicResource LuaNewScript}">
                             <Grid>
@@ -282,14 +262,14 @@
                         </Button>
                         <Button
                             Name="testScriptButtonRev"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             Click="testScriptButtonRev_Click"
                             ToolTip="{DynamicResource SettingLuaTestScript}">
                             <fa:FontAwesome Foreground="DarkGreen" Icon="Play" />
                         </Button>
                         <Button
                             Name="openScriptFolderButtonRev"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             Click="openScriptFolderButtonRev_Click"
                             ToolTip="{DynamicResource LuaOpenFolder}">
                             <Grid>
@@ -298,11 +278,25 @@
                             </Grid>
                         </Button>
                         <Button
+                                Name="refreshScriptListButtonRev"
+                                Margin="2,0,0,0"
+                                Click="RefreshScriptListButtonRev_Click"
+                                ToolTip="{DynamicResource LuaRefreshList}">
+                            <fa:FontAwesome Foreground="Green" Icon="Refresh" />
+                        </Button>
+                        <Button
                             Name="apiDocumentButtonRev"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             Click="ApiDocumentButton_Click"
                             ToolTip="{DynamicResource LuaApiReference}">
                             <fa:FontAwesome Foreground="DarkSlateGray" Icon="Book" />
+                        </Button>
+                        <Button
+                                Name="DeleteScriptButtonRev"
+                                Margin="2,0,0,0"
+                                Click="DeleteScriptButtonRev_Click"
+                                ToolTip="{DynamicResource DeleteScript}">
+                            <fa:FontAwesome Foreground="DarkCyan" Icon="trash" />
                         </Button>
                     </WrapPanel>
                     <WrapPanel
@@ -317,7 +311,7 @@
                             Text="new script" />
                         <Button
                             Name="newLuaFilebuttonRev"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Click="newLuaFilebuttonRev_Click"
@@ -326,7 +320,7 @@
                         </Button>
                         <Button
                             Name="newLuaFileCancelbuttonRev"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Click="newLuaFileCancelbuttonRev_Click"
@@ -346,7 +340,7 @@
                             Text="uart data" />
                         <Button
                             Name="luaTestbuttonRev"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Click="luaTestbuttonRev_Click"
@@ -358,7 +352,7 @@
                         </Button>
                         <Button
                             Name="luaTestCancelbuttonRev"
-                            Margin="3,0,0,0"
+                            Margin="2,0,0,0"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Click="luaTestCancelbuttonRev_Click"
@@ -374,11 +368,6 @@
                         FontSize="10pt"
                         LostFocus="textEditorRev_LostFocus"
                         ShowLineNumbers="True" />
-                    <WrapPanel Grid.Row="3" Margin="5">
-                        <TextBlock Text="{DynamicResource SettingLuaText1}" TextWrapping="Wrap" />
-                        <TextBlock Text="{DynamicResource SettingLuaText2Recv}" TextWrapping="Wrap" />
-                        <TextBlock Text="{DynamicResource SettingLuaText3}" TextWrapping="Wrap" />
-                    </WrapPanel>
                 </Grid>
             </TabItem>
         </TabControl>

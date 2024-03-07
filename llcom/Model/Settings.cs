@@ -20,9 +20,10 @@ namespace llcom.Model
         private bool _autoSaveLog = true;
         private int _showHexFormat = 0;
         private bool _hexSend = false;
+        private bool _subpackageShow = true;
         private bool _showSend = true;
         private int _parity = 0;
-        private int _timeout = 50;
+        private int _timeout = 20;
         private int _dataBits = 8;
         private int _stopBit = 1;
         private string _sendScript = "default";
@@ -31,24 +32,22 @@ namespace llcom.Model
         private bool _topmost = false;
         public List<List<ToSendData>> quickSendList = new List<List<ToSendData>>();
         private int _quickSendSelect = -1;
-        private bool _bitDelay = true;
         private bool _autoUpdate = true;
         private uint _maxLength = 10240;
         private string _language = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
         private int _encoding = 65001;
         private bool _terminal = true;
         private bool _extraEnter = false;
-        private bool _enableSymbol = true;
 
         //窗口大小与位置
         private double _windowTop = 0;
-        public double windowTop { get { return _windowTop; } set { _windowTop = value; Save(); } }
+        public double windowTop { get { return _windowTop; } set { _windowTop = value; SaveConfig(); } }
         private double _windowLeft = 0;
-        public double windowLeft { get { return _windowLeft; } set { _windowLeft = value; Save(); } }
+        public double windowLeft { get { return _windowLeft; } set { _windowLeft = value; SaveConfig(); } }
         private double _windowWidth = 0;
-        public double windowWidth { get { return _windowWidth; } set { _windowWidth = value; Save(); } }
+        public double windowWidth { get { return _windowWidth; } set { _windowWidth = value; SaveConfig(); } }
         private double _windowHeight = 0;
-        public double windowHeight { get { return _windowHeight; } set { _windowHeight = value; Save(); } }
+        public double windowHeight { get { return _windowHeight; } set { _windowHeight = value; SaveConfig(); } }
 
         public int SentCount { get; set; } = 0;
         public int ReceivedCount { get; set; } = 0;
@@ -56,7 +55,7 @@ namespace llcom.Model
         /// <summary>
         /// 保存配置
         /// </summary>
-        private void Save()
+        private void SaveConfig()
         {
             File.WriteAllText(Tools.Global.ProfilePath+"settings.json", JsonConvert.SerializeObject(this));
         }
@@ -73,7 +72,7 @@ namespace llcom.Model
             set
             {
                 _maxLength = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -103,7 +102,7 @@ namespace llcom.Model
                         quickSendList.Add(new List<ToSendData>());
                 }
                 quickSendList[_quickSendSelect] = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -119,7 +118,7 @@ namespace llcom.Model
             set
             {
                 _quickSendSelect = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -135,20 +134,7 @@ namespace llcom.Model
             set
             {
                 _autoUpdate = value;
-                Save();
-            }
-        }
-
-        public bool bitDelay
-        {
-            get
-            {
-                return _bitDelay;
-            }
-            set
-            {
-                _bitDelay = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -161,7 +147,7 @@ namespace llcom.Model
             set
             {
                 _dataToSend = value;
-                Save();
+                SaveConfig();
             }
         }
         public int baudRate
@@ -176,7 +162,7 @@ namespace llcom.Model
                 {
                     Tools.Global.uart.serial.BaudRate = value;
                     _baudRate = value;
-                    Save();
+                    SaveConfig();
                 }
                 catch(Exception e)
                 {
@@ -194,7 +180,7 @@ namespace llcom.Model
             set
             {
                 _autoReconnect = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -207,7 +193,7 @@ namespace llcom.Model
             set
             {
                 _autoSaveLog = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -226,7 +212,7 @@ namespace llcom.Model
             set
             {
                 _showHexFormat = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -242,7 +228,23 @@ namespace llcom.Model
             set
             {
                 _hexSend = value;
-                Save();
+                SaveConfig();
+            }
+        }
+
+        /// <summary>
+        /// 是否需要时间戳分包显示
+        /// </summary>
+        public bool subpackageShow
+        {
+            get
+            {
+                return _subpackageShow;
+            }
+            set
+            {
+                _subpackageShow = value;
+                SaveConfig();
             }
         }
 
@@ -255,7 +257,7 @@ namespace llcom.Model
             set
             {
                 _showSend = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -271,7 +273,7 @@ namespace llcom.Model
                 {
                     _parity = value;
                     Tools.Global.uart.serial.Parity = (Parity)value;
-                    Save();
+                    SaveConfig();
                 }
                 catch (Exception e)
                 {
@@ -289,7 +291,7 @@ namespace llcom.Model
             set
             {
                 _timeout = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -305,7 +307,7 @@ namespace llcom.Model
                 {
                     _dataBits = value;
                     Tools.Global.uart.serial.DataBits = value;
-                    Save();
+                    SaveConfig();
                 }
                 catch (Exception e)
                 {
@@ -326,7 +328,7 @@ namespace llcom.Model
                 {
                     _stopBit = value;
                     Tools.Global.uart.serial.StopBits = (StopBits)value;
-                    Save();
+                    SaveConfig();
                 }
                 catch (Exception e)
                 {
@@ -344,7 +346,7 @@ namespace llcom.Model
             set
             {
                 _sendScript = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -357,7 +359,7 @@ namespace llcom.Model
             set
             {
                 _recvScript = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -370,7 +372,7 @@ namespace llcom.Model
             set
             {
                 _runScript = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -388,20 +390,7 @@ namespace llcom.Model
                     MainWindowTop(value, EventArgs.Empty);
                 }
                 catch { }
-                Save();
-            }
-        }
-
-        public bool terminal
-        {
-            get
-            {
-                return _terminal;
-            }
-            set
-            {
-                _terminal = value;
-                Save();
+                SaveConfig();
             }
         }
 
@@ -415,7 +404,7 @@ namespace llcom.Model
             {
                 _language = value;
                 Tools.Global.LoadLanguageFile(value);
-                Save();
+                SaveConfig();
             }
         }
 
@@ -431,7 +420,7 @@ namespace llcom.Model
                 {
                     Encoding.GetEncoding(value);
                     _encoding = value;
-                    Save();
+                    SaveConfig();
                 }
                 catch { }//获取出错说明编码不对
             }
@@ -446,85 +435,41 @@ namespace llcom.Model
             set
             {
                 _extraEnter = value;
-                Save();
+                SaveConfig();
             }
         }
 
         public bool DisableLog { get; set; } = false;
 
-        public bool EnableSymbol
-        {
-            get => _enableSymbol;
-            set
-            {
-                _enableSymbol = value;
-                Save();
-            }
-        }
+        private string _quickListName0 = "Quick Group 0";
+        public string quickListName0 { get { return _quickListName0; } set { _quickListName0 = value; SaveConfig(); } }
 
-        private string _mqttServer = "broker.emqx.io";
-        private int _mqttPort = 1883;
-        private string _mqttClientID = Guid.NewGuid().ToString();
-        private bool _mqttTLS = false;
-        private bool _mqttTLSCert = false;
-        private string _mqttTLSCertCaPath = "";
-        private string _mqttTLSCertClientPath = "";
-        private string _mqttTLSCertClientPassword = "";
-        private bool _mqttWs = false;
-        private string _mqttWsPath = "/mqtt";
-        private string _mqttUser = "user";
-        private string _mqttPassword = "password";
-        private int _mqttKeepAlive = 120;
-        private bool _mqttCleanSession = false;
-        private string _mqttPublishTopic = "your/publish/topic";
-        private string _mqttSubscribeTopic = "your/subcribe/topic";
-        public string mqttServer { get { return _mqttServer; } set { _mqttServer = value; Save(); } }
-        public int mqttPort { get { return _mqttPort; } set { _mqttPort = value; Save(); } }
-        public string mqttClientID { get { return _mqttClientID; } set { _mqttClientID = value; Save(); } }
-        public bool mqttTLS { get { return _mqttTLS; } set { _mqttTLS = value; Save(); } }
-        public bool mqttTLSCert { get { return _mqttTLSCert; } set { _mqttTLSCert = value; Save(); } }
-        public string mqttTLSCertCaPath { get { return _mqttTLSCertCaPath; } set { _mqttTLSCertCaPath = value; Save(); } }
-        public string mqttTLSCertClientPath { get { return _mqttTLSCertClientPath; } set { _mqttTLSCertClientPath = value; Save(); } }
-        public string mqttTLSCertClientPassword { get { return _mqttTLSCertClientPassword; } set { _mqttTLSCertClientPassword = value; Save(); } }
-        public bool mqttWs { get { return _mqttWs; } set { _mqttWs = value; Save(); } }
-        public string mqttWsPath { get { return _mqttWsPath; } set { _mqttWsPath = value; Save(); } }
-        public string mqttUser { get { return _mqttUser; } set { _mqttUser = value; Save(); } }
-        public string mqttPassword { get { return _mqttPassword; } set { _mqttPassword = value; Save(); } }
-        public int mqttKeepAlive { get { return _mqttKeepAlive; } set { _mqttKeepAlive = value; Save(); } }
-        public bool mqttCleanSession { get { return _mqttCleanSession; } set { _mqttCleanSession = value; Save(); } }
-        public string mqttPublishTopic { get { return _mqttPublishTopic; } set { _mqttPublishTopic = value; Save(); } }
-        public string mqttSubscribeTopic { get { return _mqttSubscribeTopic; } set { _mqttSubscribeTopic = value; Save(); } }
+        private string _quickListName1 = "Quick Group 1";
+        public string quickListName1 { get { return _quickListName1; } set { _quickListName1 = value; SaveConfig(); } }
 
+        private string _quickListName2 = "Quick Group 2";
+        public string quickListName2 { get { return _quickListName2; } set { _quickListName2 = value; SaveConfig(); } }
 
-        private string _quickListName0 = "未命名0";
-        public string quickListName0 { get { return _quickListName0; } set { _quickListName0 = value; Save(); } }
+        private string _quickListName3 = "Quick Group 3";
+        public string quickListName3 { get { return _quickListName3; } set { _quickListName3 = value; SaveConfig(); } }
 
-        private string _quickListName1 = "未命名1";
-        public string quickListName1 { get { return _quickListName1; } set { _quickListName1 = value; Save(); } }
+        private string _quickListName4 = "Quick Group 4";
+        public string quickListName4 { get { return _quickListName4; } set { _quickListName4 = value; SaveConfig(); } }
 
-        private string _quickListName2 = "未命名2";
-        public string quickListName2 { get { return _quickListName2; } set { _quickListName2 = value; Save(); } }
+        private string _quickListName5 = "Quick Group 5";
+        public string quickListName5 { get { return _quickListName5; } set { _quickListName5 = value; SaveConfig(); } }
 
-        private string _quickListName3 = "未命名3";
-        public string quickListName3 { get { return _quickListName3; } set { _quickListName3 = value; Save(); } }
+        private string _quickListName6 = "Quick Group 6";
+        public string quickListName6 { get { return _quickListName6; } set { _quickListName6 = value; SaveConfig(); } }
 
-        private string _quickListName4 = "未命名4";
-        public string quickListName4 { get { return _quickListName4; } set { _quickListName4 = value; Save(); } }
+        private string _quickListName7 = "Quick Group 7";
+        public string quickListName7 { get { return _quickListName7; } set { _quickListName7 = value; SaveConfig(); } }
 
-        private string _quickListName5 = "未命名5";
-        public string quickListName5 { get { return _quickListName5; } set { _quickListName5 = value; Save(); } }
+        private string _quickListName8 = "Quick Group 8";
+        public string quickListName8 { get { return _quickListName8; } set { _quickListName8 = value; SaveConfig(); } }
 
-        private string _quickListName6 = "未命名6";
-        public string quickListName6 { get { return _quickListName6; } set { _quickListName6 = value; Save(); } }
-
-        private string _quickListName7 = "未命名7";
-        public string quickListName7 { get { return _quickListName7; } set { _quickListName7 = value; Save(); } }
-
-        private string _quickListName8 = "未命名8";
-        public string quickListName8 { get { return _quickListName8; } set { _quickListName8 = value; Save(); } }
-
-        private string _quickListName9 = "未命名9";
-        public string quickListName9 { get { return _quickListName9; } set { _quickListName9 = value; Save(); } }
+        private string _quickListName9 = "Quick Group 9";
+        public string quickListName9 { get { return _quickListName9; } set { _quickListName9 = value; SaveConfig(); } }
 
         public string GetQuickListNameNow()
         {
@@ -582,42 +527,22 @@ namespace llcom.Model
             }
         }
 
-
-
-
-        private string _tcpClientServer = "qq.com";
-        private int _tcpClientPort = 80;
-        private int _tcpClientProtocolType = 0;
-        public string tcpClientServer { get { return _tcpClientServer; } set { _tcpClientServer = value; Save(); } }
-        public int tcpClientPort { get { return _tcpClientPort; } set { _tcpClientPort = value; Save(); } }
-        public int tcpClientProtocolType { get { return _tcpClientProtocolType; } set { _tcpClientProtocolType = value; Save(); } }
-
-
-        private int _tcpServerPort = 2333;
-        public int tcpServerPort { get { return _tcpServerPort; } set { _tcpServerPort = value; Save(); } }
-
-        private int _udpServerPort = 2333;
-        public int udpServerPort { get { return _udpServerPort; } set { _udpServerPort = value; Save(); } }
-
-
         private int _maxPackShow = 1024*2;
         /// <summary>
         /// log显示时，一包最大显示长度
         /// </summary>
-        public int MaxPackShow { get { return _maxPackShow; } set { _maxPackShow = value; Save(); } }
-
+        public int MaxPackShow { get { return _maxPackShow; } set { _maxPackShow = value; SaveConfig(); } }
 
         private int _maxPacksAutoClear = 200;
         /// <summary>
         /// log显示时，达到多少包自动清空日志区域
         /// </summary>
-        public int MaxPacksAutoClear { get { return _maxPacksAutoClear; } set { _maxPacksAutoClear = value; Save(); } }
-
+        public int MaxPacksAutoClear { get { return _maxPacksAutoClear; } set { _maxPacksAutoClear = value; SaveConfig(); } }
 
         private bool _lagAutoClear = true;
         /// <summary>
         /// log输出卡顿时，自动清空数据
         /// </summary>
-        public bool LagAutoClear { get { return _lagAutoClear; } set { _lagAutoClear = value; Save(); } }
+        public bool LagAutoClear { get { return _lagAutoClear; } set { _lagAutoClear = value; SaveConfig(); } }
     }
 }

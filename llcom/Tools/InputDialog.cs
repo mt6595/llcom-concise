@@ -22,20 +22,23 @@ namespace llcom.Tools
     {
         public static void Show(string s)
         {
-            try
-            {
-                InputDialog.OpenDialog(s, null, null);
-            }
-            catch
-            {
-                System.Windows.Forms.MessageBox.Show(
-                    s,
-                    "Notice",
-                    MessageBoxButtons.OK,
-                    MessageBoxIcon.Information,
-                    MessageBoxDefaultButton.Button1,
-                    MessageBoxOptions.ServiceNotification);
-            }
+            System.Windows.Forms.MessageBox.Show(
+                s,
+                "Notice",
+                MessageBoxButtons.OK,
+                MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1,
+                MessageBoxOptions.ServiceNotification);
+        }
+        public static DialogResult ShowConfirm(string s)
+        {
+            return System.Windows.Forms.MessageBox.Show(
+                s,
+                "Notice",
+                MessageBoxButtons.OKCancel,
+                MessageBoxIcon.Information,
+                MessageBoxDefaultButton.Button1,
+                MessageBoxOptions.ServiceNotification);
         }
     }
 }

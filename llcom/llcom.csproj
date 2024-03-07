@@ -73,7 +73,7 @@
     <PlatformTarget>x64</PlatformTarget>
     <LangVersion>latest</LangVersion>
     <ErrorReport>prompt</ErrorReport>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>CppCoreCheckRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
@@ -243,40 +243,15 @@
     <Compile Include="LuaEnv\LuaEnv.cs" />
     <Compile Include="Model\LinePlotPoint.cs" />
     <Compile Include="Model\LuaFolding.cs" />
-    <Compile Include="Model\OnlineScript.cs" />
+    <Compile Include="Pages\AboutPage.xaml.cs">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Pages\Convert.cs" />
-    <Compile Include="Pages\ConvertPage.xaml.cs">
-      <DependentUpon>ConvertPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\EncodingFixPage.xaml.cs">
-      <DependentUpon>EncodingFixPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\MqttTestPage.xaml.cs">
-      <DependentUpon>MqttTestPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\OnlineScriptsPage.xaml.cs">
-      <DependentUpon>OnlineScriptsPage.xaml</DependentUpon>
+    <Compile Include="Pages\DataShowPage.xaml.cs">
+      <DependentUpon>DataShowPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\PlotPage.xaml.cs">
       <DependentUpon>PlotPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\SerialMonitorPage.xaml.cs">
-      <DependentUpon>SerialMonitorPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\SocketClientPage.xaml.cs">
-      <DependentUpon>SocketClientPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\TcpLocalPage.xaml.cs">
-      <DependentUpon>TcpLocalPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\tcpTest.xaml.cs">
-      <DependentUpon>tcpTest.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\UdpLocalPage.xaml.cs">
-      <DependentUpon>UdpLocalPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\WinUSBPage.xaml.cs">
-      <DependentUpon>WinUSBPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Tools\InputDialog.cs" />
     <Compile Include="Tools\Win32.cs" />
@@ -289,12 +264,6 @@
     <Compile Include="Model\Settings.cs" />
     <Compile Include="Model\ToSendData.cs" />
     <Compile Include="Model\Uart.cs" />
-    <Compile Include="Pages\AboutPage.xaml.cs">
-      <DependentUpon>AboutPage.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\DataShowPage.xaml.cs">
-      <DependentUpon>DataShowPage.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\SettingWindow.xaml.cs">
       <DependentUpon>SettingWindow.xaml</DependentUpon>
     </Compile>
@@ -308,47 +277,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\ConvertPage.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Pages\AboutPage.xaml">
       <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\EncodingFixPage.xaml">
-      <SubType>Designer</SubType>
+    <Page Include="Pages\DataShowPage.xaml">
       <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\MqttTestPage.xaml">
       <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\OnlineScriptsPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\PlotPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\SerialMonitorPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\SocketClientPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\TcpLocalPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\tcpTest.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\UdpLocalPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\WinUSBPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -368,14 +305,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Pages\AboutPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\DataShowPage.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\SettingWindow.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -398,6 +327,7 @@
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="Lua.xshd" />
     <Resource Include="DefaultFiles\core_script\head.lua" />
@@ -421,7 +351,6 @@
     <Resource Include="DefaultFiles\user_script_recv_convert\绘制曲线-解析结构体.lua" />
     <Resource Include="DefaultFiles\user_script_run\channel-demo.lua" />
     <Resource Include="DefaultFiles\user_script_send_convert\checksum.lua" />
-    <None Include="llcom_TemporaryKey.pfx" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>PublicSettingsSingleFileGenerator</Generator>

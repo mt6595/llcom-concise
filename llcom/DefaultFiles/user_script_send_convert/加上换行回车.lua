@@ -1,2 +1,2 @@
+--Add carriage return and line feed at the end of the data stream
 return uartData.."\r\n"
---这个是加上换行回车

@@ -50,42 +50,36 @@
             Orientation="Horizontal"
             Visibility="{Binding Path=IsMouseOver, ElementName=mainGrid, Converter={StaticResource boolVisibeConverter}}">
             <CheckBox
-                Name="RTSCheckBox"
-                Margin="5,0,0,0"
-                Content="RTS"
-                IsChecked="{Binding Rts}" />
-            <CheckBox
-                Name="DTRCheckBox"
-                Margin="5,0,0,0"
-                Content="DTR"
-                IsChecked="{Binding Dtr}" />
-            <CheckBox
                 Name="HEXBox"
-                Margin="5,0,0,0"
+                Margin="0,0,0,0"
                 Content="{DynamicResource ShowHexFormat}"
                 IsChecked="{Binding showHexFormat, Converter={StaticResource showHexFormatConverter}}"
                 IsThreeState="True"
                 ToolTip="{DynamicResource ShowHexFormatTip}" />
             <CheckBox
                 Name="HexSendCheckBox"
-                Margin="5,0,0,0"
+                Margin="15,0,0,0"
                 Content="{DynamicResource HexSendMode}"
                 IsChecked="{Binding hexSend}" />
             <CheckBox
+                Name="ShowSendCheckBox"
+                Margin="15,0,0,0"
+                Content="{DynamicResource ShowSendMode}"
+                IsChecked="{Binding showSend}" />
+            <CheckBox
                 Name="ExtraEnterCheckBox"
-                Margin="5,0,0,0"
+                Margin="15,0,0,0"
                 Content="{DynamicResource AddExtraEnter}"
                 IsChecked="{Binding extraEnter}"
                 ToolTip="{DynamicResource AddExtraEnterTip}" />
             <CheckBox
-                Name="EnableSymbolCheckBox"
-                Margin="5,0,0,0"
-                Content="{DynamicResource ShowSymbol}"
-                IsChecked="{Binding EnableSymbol}"
-                ToolTip="{DynamicResource ShowSymbolTooltip}" />
+                Name="SubpackageShowCheckBox"
+                Margin="15,0,0,0"
+                Content="{DynamicResource SubpackageShow}"
+                IsChecked="{Binding subpackageShow}" />
             <CheckBox
                 Name="DisableLogCheckBox"
-                Margin="5,0,0,0"
+                Margin="15,0,0,0"
                 Content="{DynamicResource DisableLog}"
                 IsChecked="{Binding DisableLog}" />
         </StackPanel>
